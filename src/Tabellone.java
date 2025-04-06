@@ -47,7 +47,11 @@ public class Tabellone extends JPanel implements Runnable {
     }
 
     public void update(Gemma[][] tabellone) {
-
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                caselle[i][j].setIcon(new ImageIcon(tabellone[i][j].path));
+            }
+        }
     }
 
     public void testUpdate(String s, int i, int j){

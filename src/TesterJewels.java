@@ -13,7 +13,7 @@ public class TesterJewels {
     private static Thread GUI;
 
     private static void inizializzaVariabili(){
-        gemme = new Gemma[ROWS][COLS];
+        gemme = generaMatriceGemme(ROWS, COLS);
 
         tabellone = Tabellone.getTabellone(WIDTH, HEIGHT, ROWS, COLS);
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
@@ -24,6 +24,18 @@ public class TesterJewels {
 
     public static void main(String[] args){
         inizializzaVariabili();
-        tabellone.testUpdate("ciao", 0, 0);
+        tabellone.update(gemme);
+    }
+
+    private static Gemma[][] generaMatriceGemme(int rows, int cols){
+        Gemma[][] matrice = new Gemma[rows][cols];
+
+        for (int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                matrice[i][j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+            }
+        }
+
+        return matrice;
     }
 }

@@ -1,9 +1,9 @@
 public enum Gemma {
 
-    GEMMA_BLU ("./ImmaginiGemme/blu"),
-    GEMMA_ROSSA ("./ImmaginiGemme/rosso"),
-    GEMMA_VERDE ("./ImmaginiGemme/verde"),
-    GEMMA_GIALLA ("./ImmaginiGemme/giallo");
+    GEMMA_BLU (".\\ImmaginiGemme\\blu.png"),
+    GEMMA_ROSSA (".\\ImmaginiGemme\\rossa.png"),
+    GEMMA_VERDE (".\\ImmaginiGemme\\verde.png"),
+    GEMMA_GIALLA (".\\ImmaginiGemme\\gialla.png");
 
     String path;
 
