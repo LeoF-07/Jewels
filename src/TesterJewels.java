@@ -4,7 +4,7 @@ import java.util.EventListener;
 
 public class TesterJewels {
 
-    private static final int WIDTH = 1000, HEIGHT = 800; // grandezza del Jframe
+    private static final int WIDTH = 800, HEIGHT = 800; // grandezza del Jframe
     private static final int ROWS = 10, COLS = 8; // dimensioni della matrice
 
     private static Gemma[][] gemme;

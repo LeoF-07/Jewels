@@ -1,5 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Tabellone extends JPanel implements Runnable {
 
@@ -24,6 +28,9 @@ public class Tabellone extends JPanel implements Runnable {
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 caselle[i][j] = new JButton(i + " " + j);
+                caselle[i][j].setOpaque(false);
+                caselle[i][j].setContentAreaFilled(false);
+                //caselle[i][j].setBorderPainted(false);
                 caselle[i][j].addActionListener(new PulsanteGemma());
                 add(caselle[i][j]);
             }
@@ -43,13 +50,21 @@ public class Tabellone extends JPanel implements Runnable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(Color.BLUE);
+        //setBackground(Color.LIGHT_GRAY);
+
+        try {
+            BufferedImage sfondo = ImageIO.read(new File(".\\Immagini\\Sfondo\\sfondoJewels.png"));
+            g.drawImage(sfondo, -300, 0, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void update(Gemma[][] tabellone) {
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 caselle[i][j].setIcon(new ImageIcon(tabellone[i][j].path));
+                caselle[i][j].setText("");
             }
         }
     }
