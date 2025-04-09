@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Tabellone extends JPanel implements Runnable {
+public class Tabellone extends JPanel {
 
     private int width;
     private int height;
@@ -40,11 +40,6 @@ public class Tabellone extends JPanel implements Runnable {
     public static Tabellone getTabellone(int larghezza, int altezza, int rows, int cols) {
         if(tabellone == null) tabellone = new Tabellone(larghezza, altezza, rows, cols);
         return tabellone;
-    }
-
-    @Override
-    public void run() {
-        // QUi presumo che ci debba mettere le azioni da effettuare in caso si prema un pulsante
     }
 
     @Override

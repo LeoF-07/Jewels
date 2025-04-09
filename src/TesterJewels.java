@@ -10,16 +10,12 @@ public class TesterJewels {
     private static Gemma[][] gemme;
     private static FinestraDiGiGioco finestraDiGiGioco;
     static Tabellone tabellone;
-    private static Thread GUI;
 
     private static void inizializzaVariabili(){
-        gemme = generaMatriceGemme(ROWS, COLS);
+        gemme = generaMatriceGemme();
 
         tabellone = Tabellone.getTabellone(WIDTH, HEIGHT, ROWS, COLS);
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
-
-        GUI = new Thread(finestraDiGiGioco);
-        GUI.start();
     }
 
     public static void main(String[] args){
@@ -27,15 +23,60 @@ public class TesterJewels {
         tabellone.update(gemme);
     }
 
-    private static Gemma[][] generaMatriceGemme(int rows, int cols){
-        Gemma[][] matrice = new Gemma[rows][cols];
+    private static Gemma[][] generaMatriceGemme(){
+        Gemma[][] matrice = new Gemma[ROWS][COLS];
 
-        for (int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
+        for (int i = 0; i < ROWS; i++){
+            for(int j = 0; j < COLS; j++){
                 matrice[i][j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
             }
         }
 
+        controllaCombinazioni(matrice);
+
         return matrice;
     }
+
+    public static void controllaCombinazioni(Gemma[][] matrice){
+        for(int i = 0; i < ROWS; i++){
+            for (int j = 0; j < COLS; j++){
+                controllaCombinazioneVerticale(matrice, i, j);
+                controllaCombinazioneOrizzontale(matrice, i, j);
+            }
+        }
+    }
+
+    public static void controllaCombinazioneVerticale(Gemma[][] matrice, int i, int j){
+        try{
+            if(matrice[i][j] == matrice[i - 1][j] && matrice[i][j] == matrice[i + 1][j]){
+                Gemma gemma;
+                do {
+                    gemma = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+                } while(matrice[i][j] == gemma);
+                matrice[i][j] = gemma;
+                controllaCombinazioneOrizzontale(matrice, i, j);
+                controllaCombinazioneVerticale(matrice, i, j);
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+
+        }
+    }
+
+    public static void controllaCombinazioneOrizzontale(Gemma[][] matrice, int i, int j){
+        try {
+            if(matrice[i][j] == matrice[i][j - 1] && matrice[i][j] == matrice[i][j + 1]){
+                Gemma gemma;
+                do {
+                    gemma = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+                } while(matrice[i][j] == gemma);
+                matrice[i][j] = gemma;
+                controllaCombinazioneVerticale(matrice, i, j);
+                controllaCombinazioneOrizzontale(matrice, i, j);
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+
+        }
+
+    }
+
 }
