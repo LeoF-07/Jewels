@@ -109,6 +109,9 @@ public class TesterJewels {
             } else if(combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
                 System.out.println("combinazione orizzontale");
                 tabellone.update(gemme);
+            } else{
+                gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma1.getGemma();
+                gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma2.getGemma();
             }
         }
     }
