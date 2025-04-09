@@ -13,6 +13,7 @@ public class Tabellone extends JPanel {
     private int cols;
 
     private JButton[][] caselle; //matrice delle gemme
+    private PulsanteGemma[] gemmeDaScambiare;
 
     private static Tabellone tabellone;
 
@@ -31,10 +32,12 @@ public class Tabellone extends JPanel {
                 caselle[i][j].setOpaque(false);
                 caselle[i][j].setContentAreaFilled(false);
                 //caselle[i][j].setBorderPainted(false);
-                caselle[i][j].addActionListener(new PulsanteGemma());
+                caselle[i][j].addActionListener(new PulsanteGemma(i, j));
                 add(caselle[i][j]);
             }
         }
+
+        gemmeDaScambiare = new PulsanteGemma[2];
     }
 
     public static Tabellone getTabellone(int larghezza, int altezza, int rows, int cols) {
@@ -60,12 +63,18 @@ public class Tabellone extends JPanel {
             for(int j = 0; j < cols; j++){
                 caselle[i][j].setIcon(new ImageIcon(tabellone[i][j].path));
                 caselle[i][j].setText("");
+                PulsanteGemma pulsanteGemma = (PulsanteGemma) caselle[i][j].getActionListeners()[0];
+                pulsanteGemma.setGemma(tabellone[i][j]);
             }
         }
     }
 
     public void testUpdate(String s, int i, int j){
         caselle[i][j].setText(s);
+    }
+
+    public void aggiungiGemmaDaScambiare(JButton pulsanteGemma){
+        
     }
 
 }
