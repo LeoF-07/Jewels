@@ -32,7 +32,7 @@ public class Tabellone extends JPanel {
                 caselle[i][j].setOpaque(false);
                 caselle[i][j].setContentAreaFilled(false);
                 //caselle[i][j].setBorderPainted(false);
-                caselle[i][j].addActionListener(new PulsanteGemma(i, j));
+                caselle[i][j].addActionListener(new PulsanteGemma(i, j, this));
                 add(caselle[i][j]);
             }
         }
@@ -73,8 +73,15 @@ public class Tabellone extends JPanel {
         caselle[i][j].setText(s);
     }
 
-    public void aggiungiGemmaDaScambiare(JButton pulsanteGemma){
-        
+    public void aggiungiGemmaDaScambiare(PulsanteGemma pulsanteGemma){
+        if(gemmeDaScambiare[0] == null && gemmeDaScambiare[1] == null){
+            gemmeDaScambiare[0] = pulsanteGemma;
+        } else if(gemmeDaScambiare[0] != null && gemmeDaScambiare[1] == null){
+            gemmeDaScambiare[1] = pulsanteGemma;
+            TesterJewels.cercaCombinazioneEAggiorna(gemmeDaScambiare);
+        } else {
+            gemmeDaScambiare[0] = pulsanteGemma;
+            gemmeDaScambiare[1] = null;
+        }
     }
-
 }

@@ -21,5 +21,4 @@ public class FinestraDiGiGioco extends JFrame {
         if(finestraDiGiGioco == null) finestraDiGiGioco = new FinestraDiGiGioco(titolo, larghezza, altezza, tabellone);
         return finestraDiGiGioco;
     }
-
 }

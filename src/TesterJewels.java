@@ -76,7 +76,40 @@ public class TesterJewels {
         }catch (ArrayIndexOutOfBoundsException e){
 
         }
-
     }
 
+    public static boolean combinazioneOrizzontale(int i, int j, boolean controlloRicorsivo){
+        try {
+            if(gemme[i][j] == gemme[i][j - 1] && gemme[i][j] == gemme[i][j + 1]){
+                return true;
+            }
+            if(controlloRicorsivo) return combinazioneOrizzontale(i, j - 1, false) | combinazioneOrizzontale(i, j + 1, false);
+        }catch (ArrayIndexOutOfBoundsException e){
+
+        }
+
+        return false;
+    }
+
+    public static void cercaCombinazioneEAggiorna(PulsanteGemma[] pulsantiPremuti){
+        PulsanteGemma pulsanteGemma1 = pulsantiPremuti[0];
+        PulsanteGemma pulsanteGemma2 = pulsantiPremuti[1];
+
+        if((pulsanteGemma1.getRow() == pulsanteGemma2.getRow()) && (pulsanteGemma1.getCol() == pulsanteGemma2.getCol() + 1 || pulsanteGemma1.getCol() == pulsanteGemma2.getCol() - 1)){
+
+        }
+
+        if((pulsanteGemma1.getCol() == pulsanteGemma2.getCol()) && (pulsanteGemma1.getRow() == pulsanteGemma2.getRow() + 1 || pulsanteGemma1.getRow() == pulsanteGemma2.getRow() - 1)){
+            gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma2.getGemma();
+            gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma1.getGemma();
+            System.out.println("scambia gemme");
+            if(combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
+                System.out.println("combinazione orizzontale");
+                tabellone.update(gemme);
+            } else if(combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
+                System.out.println("combinazione orizzontale");
+                tabellone.update(gemme);
+            }
+        }
+    }
 }

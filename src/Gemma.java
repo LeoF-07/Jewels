@@ -12,5 +12,4 @@ public enum Gemma {
     Gemma (String path){
         this.path = path;
     }
-
 }
