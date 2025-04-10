@@ -4,8 +4,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
-public class Tabellone extends JPanel {
+public class Tabellone extends JPanel implements Runnable {
 
     private int width;
     private int height;
@@ -46,6 +47,11 @@ public class Tabellone extends JPanel {
     }
 
     @Override
+    public void run() {
+        while(true){}
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         //setBackground(Color.LIGHT_GRAY);
@@ -59,6 +65,8 @@ public class Tabellone extends JPanel {
     }
 
     public void update(Gemma[][] tabellone) {
+        this.setVisible(false);
+
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 caselle[i][j].setIcon(new ImageIcon(tabellone[i][j].path));
@@ -66,6 +74,31 @@ public class Tabellone extends JPanel {
                 PulsanteGemma pulsanteGemma = (PulsanteGemma) caselle[i][j].getActionListeners()[0];
                 pulsanteGemma.setGemma(tabellone[i][j]);
             }
+        }
+
+        this.setVisible(true);
+    }
+
+    public void evidenziaOrizzontali(int i, int j){
+        caselle[i][j].setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        caselle[i][j - 1].setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        caselle[i][j + 1].setBorder(BorderFactory.createLineBorder(Color.GREEN));
+
+
+        System.out.println("colorazione completata");
+    }
+
+    public void evidenzia(int i, int j){
+        caselle[i][j].setBorder(BorderFactory.createLineBorder(Color.GREEN));
+    }
+
+    public void freeze(int millis){
+        System.out.println("sleep");
+
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

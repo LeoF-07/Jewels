@@ -10,11 +10,14 @@ public class TesterJewels {
     private static Gemma[][] gemme;
     private static FinestraDiGiGioco finestraDiGiGioco;
     static Tabellone tabellone;
+    static Thread t;
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
 
         tabellone = Tabellone.getTabellone(WIDTH, HEIGHT, ROWS, COLS);
+        t = new Thread(tabellone);
+        t.start();
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
     }
 
@@ -91,28 +94,109 @@ public class TesterJewels {
         return false;
     }
 
+    public static boolean combinazioneVerticale(int i, int j, boolean controlloRicorsivo){
+        try {
+            if(gemme[i][j] == gemme[i - 1][j] && gemme[i][j] == gemme[i + 1][j]){
+                return true;
+            }
+            if(controlloRicorsivo) return combinazioneVerticale(i - 1, j, false) | combinazioneVerticale(i + 1, j, false);
+        }catch (ArrayIndexOutOfBoundsException e){
+
+        }
+
+        return false;
+    }
+
+
     public static void cercaCombinazioneEAggiorna(PulsanteGemma[] pulsantiPremuti){
         PulsanteGemma pulsanteGemma1 = pulsantiPremuti[0];
         PulsanteGemma pulsanteGemma2 = pulsantiPremuti[1];
 
-        if((pulsanteGemma1.getRow() == pulsanteGemma2.getRow()) && (pulsanteGemma1.getCol() == pulsanteGemma2.getCol() + 1 || pulsanteGemma1.getCol() == pulsanteGemma2.getCol() - 1)){
+        if(((pulsanteGemma1.getRow() == pulsanteGemma2.getRow()) && (pulsanteGemma1.getCol() == pulsanteGemma2.getCol() + 1 || pulsanteGemma1.getCol() == pulsanteGemma2.getCol() - 1)) ||
+                (pulsanteGemma1.getCol() == pulsanteGemma2.getCol()) && (pulsanteGemma1.getRow() == pulsanteGemma2.getRow() + 1 || pulsanteGemma1.getRow() == pulsanteGemma2.getRow() - 1)){
 
-        }
-
-        if((pulsanteGemma1.getCol() == pulsanteGemma2.getCol()) && (pulsanteGemma1.getRow() == pulsanteGemma2.getRow() + 1 || pulsanteGemma1.getRow() == pulsanteGemma2.getRow() - 1)){
             gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma2.getGemma();
             gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma1.getGemma();
-            System.out.println("scambia gemme");
-            if(combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
-                System.out.println("combinazione orizzontale");
+
+            if(!combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true) && !combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)
+                    && !combinazioneVerticale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true) && !combinazioneVerticale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
+                gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma1.getGemma();
+                gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma2.getGemma();
+            }else{
+                tabellone.update(gemme);
+            }
+
+            /*if(combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
                 tabellone.update(gemme);
             } else if(combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
-                System.out.println("combinazione orizzontale");
+                tabellone.update(gemme);
+            } else if(combinazioneVerticale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
+                tabellone.update(gemme);
+            } else if(combinazioneVerticale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
                 tabellone.update(gemme);
             } else{
                 gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma1.getGemma();
                 gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma2.getGemma();
+            }*/
+
+            controlloTutteLeCombinazioni();
+        }
+    }
+
+    public static void scalaGemmeOrizzontali(int row, int col){
+        for(int i = row; i > 0; i--){
+            gemme[i][col] = gemme[i - 1][col];
+        }
+    }
+
+    public static void segnaOrizzontali(int row, int col){
+        for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){
+            tabellone.evidenzia(row, i);
+        }
+    }
+
+    public static void segnaVerticali(int row, int col){
+        for(int i = row; i < ROWS && gemme[row][col] == gemme[i][col]; i++){
+            tabellone.evidenzia(i, col);
+        }
+    }
+
+    public static int sequenzaOrizzontale(int row, int col){
+        int n = 0;
+        for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++, n++){}
+        return n;
+    }
+
+    public static int sequenzaVerticale(int row, int col){
+        int n = 0;
+        for(int i = row; i < ROWS && gemme[row][col] == gemme[i][col]; i++, n++){}
+        return n;
+    }
+
+    public static void controlloTutteLeCombinazioni(){
+        for(int i = 0; i < ROWS; i++){
+            for(int j = 0; j < COLS; j++){
+                int lunghezzaSequenzaOrizzontale = sequenzaOrizzontale(i, j);
+                int lunghezzaSequenzaVerticale = sequenzaVerticale(i, j);
+
+                /* Una combinazione di questo tipo ovviamente me le segna entrambe, teoricamente dopo
+                   aver trovato la combinazione fa scendere le gemme, quindi non dovrebbero esserci problemi
+
+                        G G G
+                            G
+                            G
+
+                */
+
+                if(lunghezzaSequenzaOrizzontale >= 3){
+                    segnaOrizzontali(i, j);
+                    System.out.println(lunghezzaSequenzaOrizzontale);
+                }else if(lunghezzaSequenzaVerticale >= 3){
+                    segnaVerticali(i, j);
+                    System.out.println(lunghezzaSequenzaVerticale);
+                }
             }
         }
     }
+
 }
