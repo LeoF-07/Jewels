@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-public class Tabellone extends JPanel implements Runnable {
+public class Tabellone extends JPanel {
 
     private int width;
     private int height;
@@ -44,11 +44,6 @@ public class Tabellone extends JPanel implements Runnable {
     public static Tabellone getTabellone(int larghezza, int altezza, int rows, int cols) {
         if(tabellone == null) tabellone = new Tabellone(larghezza, altezza, rows, cols);
         return tabellone;
-    }
-
-    @Override
-    public void run() {
-        while(true){}
     }
 
     @Override
@@ -93,13 +88,16 @@ public class Tabellone extends JPanel implements Runnable {
     }
 
     public void freeze(int millis){
-        System.out.println("sleep");
-
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(millis);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     public void testUpdate(String s, int i, int j){

@@ -16,8 +16,6 @@ public class TesterJewels {
         gemme = generaMatriceGemme();
 
         tabellone = Tabellone.getTabellone(WIDTH, HEIGHT, ROWS, COLS);
-        t = new Thread(tabellone);
-        t.start();
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
     }
 
@@ -88,7 +86,7 @@ public class TesterJewels {
             }
             if(controlloRicorsivo) return combinazioneOrizzontale(i, j - 1, false) | combinazioneOrizzontale(i, j + 1, false);
         }catch (ArrayIndexOutOfBoundsException e){
-
+            if(controlloRicorsivo) return combinazioneOrizzontale(i, j - 1, false) | combinazioneOrizzontale(i, j + 1, false);
         }
 
         return false;
@@ -101,7 +99,7 @@ public class TesterJewels {
             }
             if(controlloRicorsivo) return combinazioneVerticale(i - 1, j, false) | combinazioneVerticale(i + 1, j, false);
         }catch (ArrayIndexOutOfBoundsException e){
-
+            if(controlloRicorsivo) return combinazioneVerticale(i - 1, j, false) | combinazioneVerticale(i + 1, j, false);
         }
 
         return false;
@@ -146,6 +144,7 @@ public class TesterJewels {
     public static void scalaGemmeOrizzontali(int row, int col){
         for(int i = row; i > 0; i--){
             gemme[i][col] = gemme[i - 1][col];
+            tabellone.update(gemme);
         }
     }
 
@@ -153,6 +152,7 @@ public class TesterJewels {
         for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){
             tabellone.evidenzia(row, i);
         }
+        scalaGemmeOrizzontali(row, col);
     }
 
     public static void segnaVerticali(int row, int col){
@@ -190,10 +190,10 @@ public class TesterJewels {
 
                 if(lunghezzaSequenzaOrizzontale >= 3){
                     segnaOrizzontali(i, j);
-                    System.out.println(lunghezzaSequenzaOrizzontale);
+                    tabellone.freeze(500);
                 }else if(lunghezzaSequenzaVerticale >= 3){
                     segnaVerticali(i, j);
-                    System.out.println(lunghezzaSequenzaVerticale);
+                    tabellone.freeze(500);
                 }
             }
         }
