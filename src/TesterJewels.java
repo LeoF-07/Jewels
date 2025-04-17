@@ -22,7 +22,7 @@ public class TesterJewels {
 
     public static void main(String[] args){
         inizializzaVariabili();
-        tabellone.update(gemme);
+        tabellone.update(gemme, false);
     }
 
     private static Gemma[][] generaMatriceGemme(){
@@ -122,7 +122,7 @@ public class TesterJewels {
                 gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma1.getGemma();
                 gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma2.getGemma();
             }else{
-                tabellone.update(gemme);
+                tabellone.update(gemme, false);
             }
 
             controlloTutteLeCombinazioni();
@@ -137,14 +137,13 @@ public class TesterJewels {
 
             gemme[0][col + j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
 
-
-            tabellone.update(gemme);
-
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            tabellone.update(gemme, j == lunghezzaOrizzontale - 1);
         }
         //tabellone.update(gemme);
     }
@@ -157,13 +156,13 @@ public class TesterJewels {
 
             gemme[0][col] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
 
-            tabellone.update(gemme);
-
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            tabellone.update(gemme, j == lunghezzaVerticale - 1);
         }
         //tabellone.update(gemme);
     }
@@ -198,9 +197,11 @@ public class TesterJewels {
                 if(lunghezzaSequenzaOrizzontale >= 3){
                     tabellone.evidenzia(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
                     tabellone.scala(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
+                    break;
                 }else if(lunghezzaSequenzaVerticale >= 3){
                     tabellone.evidenzia(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
                     tabellone.scala(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
+                    break;
                 }
             }
         }

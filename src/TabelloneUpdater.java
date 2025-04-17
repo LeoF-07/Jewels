@@ -7,13 +7,15 @@ public class TabelloneUpdater extends SwingWorker<Object, Object> {
     private Gemma[][] gemme;
     private JButton[][] caselle;
     private Tabellone tabellone;
+    private boolean updateScalatura;
 
-    public TabelloneUpdater(int rows, int cols, Gemma[][] gemme, JButton[][] caselle, Tabellone tabellone){
+    public TabelloneUpdater(int rows, int cols, Gemma[][] gemme, JButton[][] caselle, Tabellone tabellone, boolean updateScalatura){
         this.rows = rows;
         this.cols = cols;
         this.gemme = gemme;
         this.caselle = caselle;
         this.tabellone = tabellone;
+        this.updateScalatura = updateScalatura;
     }
 
     @Override
@@ -31,6 +33,8 @@ public class TabelloneUpdater extends SwingWorker<Object, Object> {
                     }
                 }
                 tabellone.setVisible(true);
+
+                if(updateScalatura) TesterJewels.controlloTutteLeCombinazioni();
             }
         });
         return null;

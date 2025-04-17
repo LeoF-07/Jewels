@@ -57,8 +57,12 @@ public class Tabellone extends JPanel {
         }
     }
 
-    public void update(Gemma[][] tabellone) {
+    /*public void update(Gemma[][] tabellone) {
         new TabelloneUpdater(rows, cols, tabellone, caselle, this).execute();
+    }*/
+
+    public void update(Gemma[][] tabellone, boolean updateScalatura) {
+        new TabelloneUpdater(rows, cols, tabellone, caselle, this, updateScalatura).execute();
     }
 
     public void evidenzia(int row, int col, int lunghezzaSequenza, Direzione direzione){
