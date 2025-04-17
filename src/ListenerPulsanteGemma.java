@@ -18,7 +18,6 @@ public class ListenerPulsanteGemma implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         /*JButton pulsante = (JButton) e.getSource();
         System.out.println();*/
-        System.out.println(getRow() + " " + getCol() + " " + getGemma());
         tabellone.aggiungiGemmaDaScambiare(this);
     }
 

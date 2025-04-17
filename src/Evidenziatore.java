@@ -45,7 +45,10 @@ public class Evidenziatore extends SwingWorker<Object, Object> {
                 else for (int i = row; i < row + lunghezzaSequenza; i++) caselle[i][col].setBorder(tabellone.DEFAULT_BORDER);
                 tabellone.setVisible(true);
 
-                TesterJewels.semaforoScala.release();
+                // TesterJewels.semaforoScala.release();
+
+                if(direzione == Direzione.ORIZZONTALE) TesterJewels.semaforoScalaOrizzontale.release();
+                else TesterJewels.semafororeScalaVerticale.release();
             }
         });
 

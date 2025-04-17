@@ -17,9 +17,15 @@ public class Scalatore extends SwingWorker<Object, Object> {
 
     @Override
     protected Object doInBackground() throws Exception {
-        TesterJewels.semaforoScala.acquire();
-        if(direzione == Direzione.ORIZZONTALE) TesterJewels.scalaGemmeOrizzontali(row, col, lunghezzaSequenza);
-        else TesterJewels.scalaGemmeVerticali(row, col, lunghezzaSequenza);
+        // TesterJewels.semaforoScala.acquire();
+        if(direzione == Direzione.ORIZZONTALE){
+            TesterJewels.semaforoScalaOrizzontale.acquire();
+            TesterJewels.scalaGemmeOrizzontali(row, col, lunghezzaSequenza);
+        }
+        else {
+            TesterJewels.semafororeScalaVerticale.acquire();
+            TesterJewels.scalaGemmeVerticali(row, col, lunghezzaSequenza);
+        }
         return null;
     }
 

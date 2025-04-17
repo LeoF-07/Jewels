@@ -15,6 +15,8 @@ public class TesterJewels {
     private static JLabel intestazione;
 
     public static Semaphore semaforoScala = new Semaphore(0);
+    public static Semaphore semaforoScalaOrizzontale = new Semaphore(0);
+    public static Semaphore semafororeScalaVerticale = new Semaphore(0);
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
@@ -145,32 +147,39 @@ public class TesterJewels {
 
             gemme[0][col + j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
 
+            tabellone.update(gemme, j == lunghezzaOrizzontale - 1);
+
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
-            tabellone.update(gemme, j == lunghezzaOrizzontale - 1);
         }
         //tabellone.update(gemme);
     }
 
     public static void scalaGemmeVerticali(int row, int col, int lunghezzaVerticale){
         for(int j = 0; j < lunghezzaVerticale; j++){
-            for(int i = row; i > -j; i--){
+            /*for(int i = row; i > -j; i--){
                 gemme[i + j][col] = gemme[i - 1 + j][col];
+                System.out.print((i + j) + " ");
+            }
+
+            System.out.println();*/
+
+            for(int i = row + j; i > 0; i--){
+                gemme[i][col] = gemme[i - 1][col];
             }
 
             gemme[0][col] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+
+            tabellone.update(gemme, j == lunghezzaVerticale - 1);
 
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
-            tabellone.update(gemme, j == lunghezzaVerticale - 1);
         }
         //tabellone.update(gemme);
     }
@@ -207,13 +216,15 @@ public class TesterJewels {
                     intestazione.setText("Punteggio: " + punteggio);
                     tabellone.evidenzia(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
                     tabellone.scala(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
-                    break;
-                }else if(lunghezzaSequenzaVerticale >= 3){
+                    return;
+                }
+
+                if(lunghezzaSequenzaVerticale >= 3){
                     punteggio += lunghezzaSequenzaVerticale;
                     intestazione.setText("Punteggio: " + punteggio);
                     tabellone.evidenzia(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
                     tabellone.scala(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
-                    break;
+                    return;
                 }
             }
         }
