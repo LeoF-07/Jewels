@@ -4,23 +4,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 
 public class Tabellone extends JPanel {
 
-    private int width;
-    private int height;
     private int rows;
     private int cols;
 
     private JButton[][] caselle; //matrice delle gemme
-    private PulsanteGemma[] gemmeDaScambiare;
+    private ListenerPulsanteGemma[] gemmeDaScambiare;
 
     private static Tabellone tabellone;
 
-    private Tabellone(int larghezza, int altezza, int rows, int cols) {
-        this.width = larghezza;
-        this.height = altezza;
+    private Tabellone(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
 
@@ -33,16 +28,16 @@ public class Tabellone extends JPanel {
                 caselle[i][j].setOpaque(false);
                 caselle[i][j].setContentAreaFilled(false);
                 //caselle[i][j].setBorderPainted(false);
-                caselle[i][j].addActionListener(new PulsanteGemma(i, j, this));
+                caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
                 add(caselle[i][j]);
             }
         }
 
-        gemmeDaScambiare = new PulsanteGemma[2];
+        gemmeDaScambiare = new ListenerPulsanteGemma[2];
     }
 
-    public static Tabellone getTabellone(int larghezza, int altezza, int rows, int cols) {
-        if(tabellone == null) tabellone = new Tabellone(larghezza, altezza, rows, cols);
+    public static Tabellone getTabellone(int rows, int cols) {
+        if(tabellone == null) tabellone = new Tabellone(rows, cols);
         return tabellone;
     }
 
@@ -60,58 +55,21 @@ public class Tabellone extends JPanel {
     }
 
     public void update(Gemma[][] tabellone) {
-        this.setVisible(false);
-
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
-                caselle[i][j].setIcon(new ImageIcon(tabellone[i][j].path));
-                caselle[i][j].setText("");
-                PulsanteGemma pulsanteGemma = (PulsanteGemma) caselle[i][j].getActionListeners()[0];
-                pulsanteGemma.setGemma(tabellone[i][j]);
-            }
-        }
-
-        this.setVisible(true);
+        new TabelloneUpdater(rows, cols, tabellone, caselle, this).execute();
     }
 
-    public void evidenziaOrizzontali(int i, int j){
-        caselle[i][j].setBorder(BorderFactory.createLineBorder(Color.GREEN));
-        caselle[i][j - 1].setBorder(BorderFactory.createLineBorder(Color.GREEN));
-        caselle[i][j + 1].setBorder(BorderFactory.createLineBorder(Color.GREEN));
-
-
-        System.out.println("colorazione completata");
+    public void evidenziaOrizzontali(int row, int col, int lunghezzaSequenza){
+        new Evidenziatore(row, col, lunghezzaSequenza, caselle, this).execute();
     }
 
-    public void evidenzia(int i, int j){
-        caselle[i][j].setBorder(BorderFactory.createLineBorder(Color.GREEN));
-    }
-
-    public void freeze(int millis){
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(millis);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
-
-    public void testUpdate(String s, int i, int j){
-        caselle[i][j].setText(s);
-    }
-
-    public void aggiungiGemmaDaScambiare(PulsanteGemma pulsanteGemma){
+    public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){
         if(gemmeDaScambiare[0] == null && gemmeDaScambiare[1] == null){
-            gemmeDaScambiare[0] = pulsanteGemma;
+            gemmeDaScambiare[0] = listenerPulsanteGemma;
         } else if(gemmeDaScambiare[0] != null && gemmeDaScambiare[1] == null){
-            gemmeDaScambiare[1] = pulsanteGemma;
+            gemmeDaScambiare[1] = listenerPulsanteGemma;
             TesterJewels.cercaCombinazioneEAggiorna(gemmeDaScambiare);
         } else {
-            gemmeDaScambiare[0] = pulsanteGemma;
+            gemmeDaScambiare[0] = listenerPulsanteGemma;
             gemmeDaScambiare[1] = null;
         }
     }

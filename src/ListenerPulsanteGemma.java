@@ -1,15 +1,14 @@
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PulsanteGemma implements ActionListener {
+public class ListenerPulsanteGemma implements ActionListener {
 
     private Gemma gemma;
     private int row;
     private int col;
     private Tabellone tabellone;
 
-    public PulsanteGemma(int row, int col, Tabellone tabellone){
+    public ListenerPulsanteGemma(int row, int col, Tabellone tabellone){
         this.row = row;
         this.col = col;
         this.tabellone = tabellone;

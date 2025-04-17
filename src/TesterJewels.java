@@ -1,6 +1,4 @@
-import javax.swing.*;
-import java.awt.*;
-import java.util.EventListener;
+import java.util.concurrent.Semaphore;
 
 public class TesterJewels {
 
@@ -9,13 +7,13 @@ public class TesterJewels {
 
     private static Gemma[][] gemme;
     private static FinestraDiGiGioco finestraDiGiGioco;
-    static Tabellone tabellone;
-    static Thread t;
+    private static Tabellone tabellone;
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
 
-        tabellone = Tabellone.getTabellone(WIDTH, HEIGHT, ROWS, COLS);
+        tabellone = Tabellone.getTabellone(ROWS, COLS);
+        tabellone.setVisible(false);
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
     }
 
@@ -106,20 +104,20 @@ public class TesterJewels {
     }
 
 
-    public static void cercaCombinazioneEAggiorna(PulsanteGemma[] pulsantiPremuti){
-        PulsanteGemma pulsanteGemma1 = pulsantiPremuti[0];
-        PulsanteGemma pulsanteGemma2 = pulsantiPremuti[1];
+    public static void cercaCombinazioneEAggiorna(ListenerPulsanteGemma[] pulsantiPremuti){
+        ListenerPulsanteGemma listenerPulsanteGemma1 = pulsantiPremuti[0];
+        ListenerPulsanteGemma listenerPulsanteGemma2 = pulsantiPremuti[1];
 
-        if(((pulsanteGemma1.getRow() == pulsanteGemma2.getRow()) && (pulsanteGemma1.getCol() == pulsanteGemma2.getCol() + 1 || pulsanteGemma1.getCol() == pulsanteGemma2.getCol() - 1)) ||
-                (pulsanteGemma1.getCol() == pulsanteGemma2.getCol()) && (pulsanteGemma1.getRow() == pulsanteGemma2.getRow() + 1 || pulsanteGemma1.getRow() == pulsanteGemma2.getRow() - 1)){
+        if(((listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow()) && (listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol() + 1 || listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol() - 1)) ||
+                (listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol()) && (listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() + 1 || listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() - 1)){
 
-            gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma2.getGemma();
-            gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma1.getGemma();
+            gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma2.getGemma();
+            gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma1.getGemma();
 
-            if(!combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true) && !combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)
-                    && !combinazioneVerticale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true) && !combinazioneVerticale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
-                gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma1.getGemma();
-                gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma2.getGemma();
+            if(!combinazioneOrizzontale(listenerPulsanteGemma1.getRow(), listenerPulsanteGemma1.getCol(), true) && !combinazioneOrizzontale(listenerPulsanteGemma2.getRow(), listenerPulsanteGemma2.getCol(), true)
+                    && !combinazioneVerticale(listenerPulsanteGemma1.getRow(), listenerPulsanteGemma1.getCol(), true) && !combinazioneVerticale(listenerPulsanteGemma2.getRow(), listenerPulsanteGemma2.getCol(), true)){
+                gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma1.getGemma();
+                gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma2.getGemma();
             }else{
                 tabellone.update(gemme);
             }
@@ -144,22 +142,20 @@ public class TesterJewels {
     public static void scalaGemmeOrizzontali(int row, int col){
         for(int i = row; i > 0; i--){
             gemme[i][col] = gemme[i - 1][col];
-            tabellone.update(gemme);
         }
     }
 
-    public static void segnaOrizzontali(int row, int col){
+    /*public static void segnaOrizzontali(int row, int col){
         for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){
             tabellone.evidenzia(row, i);
         }
-        scalaGemmeOrizzontali(row, col);
     }
 
     public static void segnaVerticali(int row, int col){
         for(int i = row; i < ROWS && gemme[row][col] == gemme[i][col]; i++){
             tabellone.evidenzia(i, col);
         }
-    }
+    }*/
 
     public static int sequenzaOrizzontale(int row, int col){
         int n = 0;
@@ -189,11 +185,9 @@ public class TesterJewels {
                 */
 
                 if(lunghezzaSequenzaOrizzontale >= 3){
-                    segnaOrizzontali(i, j);
-                    tabellone.freeze(500);
+                    tabellone.evidenziaOrizzontali(i, j, lunghezzaSequenzaOrizzontale);
                 }else if(lunghezzaSequenzaVerticale >= 3){
-                    segnaVerticali(i, j);
-                    tabellone.freeze(500);
+                    //segnaVerticali(i, j);
                 }
             }
         }
