@@ -1,23 +1,31 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.concurrent.Semaphore;
 
 public class TesterJewels {
 
-    private static final int WIDTH = 800, HEIGHT = 800; // grandezza del Jframe
+    private static final int WIDTH = 820, HEIGHT = 900; // grandezza del Jframe
     private static final int ROWS = 10, COLS = 8; // dimensioni della matrice
+
+    private static int punteggio;
 
     private static Gemma[][] gemme;
     private static FinestraDiGiGioco finestraDiGiGioco;
     private static Tabellone tabellone;
+    private static JLabel intestazione;
 
     public static Semaphore semaforoScala = new Semaphore(0);
-    public static Semaphore semaforoControllo = new Semaphore(0);
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
 
-        tabellone = Tabellone.getTabellone(ROWS, COLS);
+        tabellone = Tabellone.getTabellone(ROWS, COLS); // Singleton
         tabellone.setVisible(false);
-        finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone); // Singleton
+
+        punteggio = 0;
+        intestazione = new JLabel("Punteggio: " + punteggio);
+
+        finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone, intestazione); // Singleton
     }
 
     public static void main(String[] args){
@@ -195,10 +203,14 @@ public class TesterJewels {
                 */
 
                 if(lunghezzaSequenzaOrizzontale >= 3){
+                    punteggio += lunghezzaSequenzaOrizzontale;
+                    intestazione.setText("Punteggio: " + punteggio);
                     tabellone.evidenzia(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
                     tabellone.scala(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
                     break;
                 }else if(lunghezzaSequenzaVerticale >= 3){
+                    punteggio += lunghezzaSequenzaVerticale;
+                    intestazione.setText("Punteggio: " + punteggio);
                     tabellone.evidenzia(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
                     tabellone.scala(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
                     break;

@@ -32,6 +32,9 @@ public class Tabellone extends JPanel {
                 caselle[i][j].setContentAreaFilled(false);
                 //caselle[i][j].setBorderPainted(false);
                 caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
+
+                caselle[i][j].setPreferredSize(new Dimension(100, 80));
+
                 add(caselle[i][j]);
             }
         }
