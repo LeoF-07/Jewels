@@ -9,6 +9,9 @@ public class TesterJewels {
     private static FinestraDiGiGioco finestraDiGiGioco;
     private static Tabellone tabellone;
 
+    public static Semaphore semaforoScala = new Semaphore(0);
+    public static Semaphore semaforoControllo = new Semaphore(0);
+
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
 
@@ -122,40 +125,48 @@ public class TesterJewels {
                 tabellone.update(gemme);
             }
 
-            /*if(combinazioneOrizzontale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
-                tabellone.update(gemme);
-            } else if(combinazioneOrizzontale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
-                tabellone.update(gemme);
-            } else if(combinazioneVerticale(pulsanteGemma1.getRow(), pulsanteGemma1.getCol(), true)){
-                tabellone.update(gemme);
-            } else if(combinazioneVerticale(pulsanteGemma2.getRow(), pulsanteGemma2.getCol(), true)){
-                tabellone.update(gemme);
-            } else{
-                gemme[pulsanteGemma1.getRow()][pulsanteGemma1.getCol()] = pulsanteGemma1.getGemma();
-                gemme[pulsanteGemma2.getRow()][pulsanteGemma2.getCol()] = pulsanteGemma2.getGemma();
-            }*/
-
             controlloTutteLeCombinazioni();
         }
     }
 
-    public static void scalaGemmeOrizzontali(int row, int col){
-        for(int i = row; i > 0; i--){
-            gemme[i][col] = gemme[i - 1][col];
+    public static void scalaGemmeOrizzontali(int row, int col, int lunghezzaOrizzontale){
+        for(int j = 0; j < lunghezzaOrizzontale; j++){
+            for(int i = row; i > 0; i--){
+                gemme[i][col + j] = gemme[i - 1][col + j];
+            }
+
+            gemme[0][col + j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+
+
+            tabellone.update(gemme);
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+        //tabellone.update(gemme);
     }
 
-    /*public static void segnaOrizzontali(int row, int col){
-        for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){
-            tabellone.evidenzia(row, i);
-        }
-    }
+    public static void scalaGemmeVerticali(int row, int col, int lunghezzaVerticale){
+        for(int j = 0; j < lunghezzaVerticale; j++){
+            for(int i = row; i > -j; i--){
+                gemme[i + j][col] = gemme[i - 1 + j][col];
+            }
 
-    public static void segnaVerticali(int row, int col){
-        for(int i = row; i < ROWS && gemme[row][col] == gemme[i][col]; i++){
-            tabellone.evidenzia(i, col);
+            gemme[0][col] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+
+            tabellone.update(gemme);
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-    }*/
+        //tabellone.update(gemme);
+    }
 
     public static int sequenzaOrizzontale(int row, int col){
         int n = 0;
@@ -185,9 +196,11 @@ public class TesterJewels {
                 */
 
                 if(lunghezzaSequenzaOrizzontale >= 3){
-                    tabellone.evidenziaOrizzontali(i, j, lunghezzaSequenzaOrizzontale);
+                    tabellone.evidenzia(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
+                    tabellone.scala(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
                 }else if(lunghezzaSequenzaVerticale >= 3){
-                    //segnaVerticali(i, j);
+                    tabellone.evidenzia(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
+                    tabellone.scala(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
                 }
             }
         }

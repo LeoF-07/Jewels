@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,6 +13,8 @@ public class Tabellone extends JPanel {
 
     private JButton[][] caselle; //matrice delle gemme
     private ListenerPulsanteGemma[] gemmeDaScambiare;
+
+    public final Border DEFAULT_BORDER = new JButton().getBorder();
 
     private static Tabellone tabellone;
 
@@ -58,8 +61,12 @@ public class Tabellone extends JPanel {
         new TabelloneUpdater(rows, cols, tabellone, caselle, this).execute();
     }
 
-    public void evidenziaOrizzontali(int row, int col, int lunghezzaSequenza){
-        new Evidenziatore(row, col, lunghezzaSequenza, caselle, this).execute();
+    public void evidenzia(int row, int col, int lunghezzaSequenza, Direzione direzione){
+        new Evidenziatore(row, col, lunghezzaSequenza, caselle, this, direzione).execute();
+    }
+
+    public void scala(int row, int col, int lunghezzaSequenza, Direzione direzione){
+        new Scalatore(row, col, lunghezzaSequenza, direzione).execute();
     }
 
     public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){
