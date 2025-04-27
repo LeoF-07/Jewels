@@ -1,11 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.concurrent.Semaphore;
 
 public class TesterJewels {
 
-    private static final int WIDTH = 820, HEIGHT = 900; // grandezza del Jframe
-    private static final int ROWS = 10, COLS = 8; // dimensioni della matrice
+    public static final int WIDTH = 820, HEIGHT = 900; // grandezza del Jframe
+    public static final int ROWS = 10, COLS = 8; // dimensioni della matrice
 
     private static int punteggio;
 
@@ -15,8 +18,8 @@ public class TesterJewels {
     private static JLabel intestazione;
 
     public static Semaphore semaforoScala = new Semaphore(0);
-    public static Semaphore semaforoScalaOrizzontale = new Semaphore(0);
-    public static Semaphore semafororeScalaVerticale = new Semaphore(0);
+
+    public static LinkedHashSet<Integer> caselleDaScalare;
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
@@ -28,6 +31,8 @@ public class TesterJewels {
         intestazione = new JLabel("Punteggio: " + punteggio);
 
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone, intestazione); // Singleton
+
+        caselleDaScalare = new LinkedHashSet<>();
     }
 
     public static void main(String[] args){
@@ -139,49 +144,20 @@ public class TesterJewels {
         }
     }
 
-    public static void scalaGemmeOrizzontali(int row, int col, int lunghezzaOrizzontale){
-        for(int j = 0; j < lunghezzaOrizzontale; j++){
-            for(int i = row; i > 0; i--){
-                gemme[i][col + j] = gemme[i - 1][col + j];
-            }
-
-            gemme[0][col + j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
-
-            tabellone.update(gemme, j == lunghezzaOrizzontale - 1);
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+    public static void scalaGemme(int row, int col, boolean updateScalatura){
+        for(int i = row; i > 0; i--){
+            gemme[i][col] = gemme[i - 1][col];
         }
-        //tabellone.update(gemme);
-    }
 
-    public static void scalaGemmeVerticali(int row, int col, int lunghezzaVerticale){
-        for(int j = 0; j < lunghezzaVerticale; j++){
-            /*for(int i = row; i > -j; i--){
-                gemme[i + j][col] = gemme[i - 1 + j][col];
-                System.out.print((i + j) + " ");
-            }
+        gemme[0][col] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
 
-            System.out.println();*/
+        tabellone.update(gemme, updateScalatura);
 
-            for(int i = row + j; i > 0; i--){
-                gemme[i][col] = gemme[i - 1][col];
-            }
-
-            gemme[0][col] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
-
-            tabellone.update(gemme, j == lunghezzaVerticale - 1);
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        //tabellone.update(gemme);
     }
 
     public static int sequenzaOrizzontale(int row, int col){
@@ -197,36 +173,40 @@ public class TesterJewels {
     }
 
     public static void controlloTutteLeCombinazioni(){
+        caselleDaScalare.clear();
+
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLS; j++){
                 int lunghezzaSequenzaOrizzontale = sequenzaOrizzontale(i, j);
                 int lunghezzaSequenzaVerticale = sequenzaVerticale(i, j);
 
-                /* Una combinazione di questo tipo ovviamente me le segna entrambe, teoricamente dopo
-                   aver trovato la combinazione fa scendere le gemme, quindi non dovrebbero esserci problemi
+                if(lunghezzaSequenzaOrizzontale >= 3) aggiungiAllaLista(i, j, Direzione.ORIZZONTALE);
 
-                        G G G
-                            G
-                            G
-
-                */
-
-                if(lunghezzaSequenzaOrizzontale >= 3){
-                    punteggio += lunghezzaSequenzaOrizzontale;
-                    intestazione.setText("Punteggio: " + punteggio);
-                    tabellone.evidenzia(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
-                    tabellone.scala(i, j, lunghezzaSequenzaOrizzontale, Direzione.ORIZZONTALE);
-                    return;
-                }
-
-                if(lunghezzaSequenzaVerticale >= 3){
-                    punteggio += lunghezzaSequenzaVerticale;
-                    intestazione.setText("Punteggio: " + punteggio);
-                    tabellone.evidenzia(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
-                    tabellone.scala(i, j, lunghezzaSequenzaVerticale, Direzione.VERTICALE);
-                    return;
-                }
+                if(lunghezzaSequenzaVerticale >= 3) aggiungiAllaLista(i, j, Direzione.VERTICALE);
             }
+        }
+
+        if(caselleDaScalare.isEmpty()) return;
+
+        punteggio += caselleDaScalare.size();
+        intestazione.setText("Punteggio: " + punteggio);
+
+        tabellone.evidenzia(caselleDaScalare);
+        tabellone.scala(caselleDaScalare);
+    }
+
+    public static void aggiungiAllaLista(int row, int col, Direzione direzione){
+        switch (direzione){
+            case ORIZZONTALE:
+                for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){
+                    caselleDaScalare.add(row * COLS + i);
+                }
+                break;
+            case VERTICALE:
+                for(int i = row; i < ROWS && gemme[row][col] == gemme[i][col]; i++){
+                    caselleDaScalare.add(i * COLS + col);
+                }
+                break;
         }
     }
 

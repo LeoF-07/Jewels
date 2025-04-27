@@ -1,30 +1,28 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 public class Scalatore extends SwingWorker<Object, Object> {
 
-    private int row;
-    private int col;
-    private int lunghezzaSequenza;
-    private Direzione direzione;
+    private LinkedHashSet<Integer> caselleDaScalare;
 
-    public Scalatore(int row, int col, int lunghezzaSequenza, Direzione direzione){
-        this.row = row;
-        this.col = col;
-        this.lunghezzaSequenza = lunghezzaSequenza;
-        this.direzione = direzione;
+    public Scalatore(LinkedHashSet<Integer> caselleDaScalare){
+        this.caselleDaScalare = caselleDaScalare;
     }
 
     @Override
     protected Object doInBackground() throws Exception {
-        // TesterJewels.semaforoScala.acquire();
-        if(direzione == Direzione.ORIZZONTALE){
-            TesterJewels.semaforoScalaOrizzontale.acquire();
-            TesterJewels.scalaGemmeOrizzontali(row, col, lunghezzaSequenza);
-        }
-        else {
-            TesterJewels.semafororeScalaVerticale.acquire();
-            TesterJewels.scalaGemmeVerticali(row, col, lunghezzaSequenza);
+        TesterJewels.semaforoScala.acquire();
+
+        Iterator<Integer> iterator = caselleDaScalare.iterator();
+        for(int i = 0; iterator.hasNext(); i++){
+            int posizione = iterator.next();
+            int row = posizione / TesterJewels.COLS;
+            int col = posizione % TesterJewels.COLS;
+            if(i == caselleDaScalare.size() - 1) TesterJewels.scalaGemme(row, col, true);
+            else TesterJewels.scalaGemme(row, col, false);
         }
         return null;
     }

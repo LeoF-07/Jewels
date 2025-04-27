@@ -5,6 +5,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class Tabellone extends JPanel {
 
@@ -60,20 +64,16 @@ public class Tabellone extends JPanel {
         }
     }
 
-    /*public void update(Gemma[][] tabellone) {
-        new TabelloneUpdater(rows, cols, tabellone, caselle, this).execute();
-    }*/
-
     public void update(Gemma[][] tabellone, boolean updateScalatura) {
         new TabelloneUpdater(rows, cols, tabellone, caselle, this, updateScalatura).execute();
     }
 
-    public void evidenzia(int row, int col, int lunghezzaSequenza, Direzione direzione){
-        new Evidenziatore(row, col, lunghezzaSequenza, caselle, this, direzione).execute();
+    public void evidenzia(LinkedHashSet<Integer> caselleDaScalare){
+        new Evidenziatore(caselleDaScalare, caselle, this).execute();
     }
 
-    public void scala(int row, int col, int lunghezzaSequenza, Direzione direzione){
-        new Scalatore(row, col, lunghezzaSequenza, direzione).execute();
+    public void scala(LinkedHashSet<Integer> caselleDaScalare){
+        new Scalatore(caselleDaScalare).execute();
     }
 
     public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){
