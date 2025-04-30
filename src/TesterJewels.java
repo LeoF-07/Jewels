@@ -1,25 +1,29 @@
 import javax.swing.*;
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.*;
 import java.util.LinkedHashSet;
 import java.util.concurrent.Semaphore;
 
 public class TesterJewels {
 
-    public static final int WIDTH = 820, HEIGHT = 900; // grandezza del Jframe
+    public static final int WIDTH_MENU = 600, HEIGHT_MENU = 200; // grandezza del Jframe
+    public static final int WIDTH = 800, HEIGHT = 870; // grandezza del Jframe
     public static final int ROWS = 10, COLS = 8; // dimensioni della matrice
 
     private static int punteggio;
+    private static int tempo;
 
     private static Gemma[][] gemme;
+    public static Semaphore semaforoScala = new Semaphore(0);
+    public static LinkedHashSet<Integer> caselleDaScalare;
+    private static int tempoScelto;
+    private static Classifica classifica;
+
+    private static Menu menu;
+
     private static FinestraDiGiGioco finestraDiGiGioco;
     private static Tabellone tabellone;
-    private static JLabel intestazione;
-
-    public static Semaphore semaforoScala = new Semaphore(0);
-
-    public static LinkedHashSet<Integer> caselleDaScalare;
+    private static JLabel labelPunteggio;
+    private static JLabel labelTempo;
 
     private static void inizializzaVariabili(){
         gemme = generaMatriceGemme();
@@ -27,17 +31,41 @@ public class TesterJewels {
         tabellone = Tabellone.getTabellone(ROWS, COLS); // Singleton
         tabellone.setVisible(false);
 
-        punteggio = 0;
-        intestazione = new JLabel("Punteggio: " + punteggio);
+        classifica = new Classifica();
 
-        finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone, intestazione); // Singleton
+        menu = new Menu("Menu", WIDTH_MENU, HEIGHT_MENU, classifica);
+
+        punteggio = 0;
+        labelPunteggio = new JLabel("Punteggio: " + punteggio);
+
+        tempo = 0;
+        labelTempo = new JLabel("Tempo: " + tempo + "s");
+
+        finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone, labelPunteggio, labelTempo); // Singleton
+        finestraDiGiGioco.setVisible(false);
 
         caselleDaScalare = new LinkedHashSet<>();
     }
 
     public static void main(String[] args){
         inizializzaVariabili();
+    }
+
+    public static void gioca(int tempoTotale){
+        finestraDiGiGioco.setVisible(true);
         tabellone.update(gemme, false);
+        tempoScelto = tempoTotale;
+        avviaCronometro(tempoTotale);
+    }
+
+    public static void terminaPartita(){
+        tabellone.disabilita();
+        JOptionPane.showMessageDialog(null, "Fine partita");
+        classifica.aggiorna(tempoScelto, punteggio);
+    }
+
+    private static void avviaCronometro(int tempoTotale){
+        new Cronometro(labelTempo, tempoTotale).execute();
     }
 
     private static Gemma[][] generaMatriceGemme(){
@@ -186,10 +214,8 @@ public class TesterJewels {
             }
         }
 
-        if(caselleDaScalare.isEmpty()) return;
-
         punteggio += caselleDaScalare.size();
-        intestazione.setText("Punteggio: " + punteggio);
+        labelPunteggio.setText("Punteggio: " + punteggio);
 
         tabellone.evidenzia(caselleDaScalare);
         tabellone.scala(caselleDaScalare);

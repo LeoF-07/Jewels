@@ -37,8 +37,6 @@ public class Tabellone extends JPanel {
                 //caselle[i][j].setBorderPainted(false);
                 caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
 
-                caselle[i][j].setPreferredSize(new Dimension(100, 80));
-
                 add(caselle[i][j]);
             }
         }
@@ -85,6 +83,22 @@ public class Tabellone extends JPanel {
         } else {
             gemmeDaScambiare[0] = listenerPulsanteGemma;
             gemmeDaScambiare[1] = null;
+        }
+    }
+
+    public void disabilita(){
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                caselle[i][j].addActionListener(null);
+            }
+        }
+    }
+
+    public void abilita(){
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
+            }
         }
     }
 }

@@ -14,6 +14,9 @@ public class Scalatore extends SwingWorker<Object, Object> {
 
     @Override
     protected Object doInBackground() throws Exception {
+        // Attenzione, questo codice non posso metterlo sul tester perché lavora in un Thread apposito dello SwingWorker
+        // Posso vederelo con sout(Thread.currentThread().getName());
+
         TesterJewels.semaforoScala.acquire();
 
         Iterator<Integer> iterator = caselleDaScalare.iterator();
