@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 
 public class Classifica implements Serializable {
@@ -35,38 +36,33 @@ public class Classifica implements Serializable {
     }
 
     public void aggiorna(int tempoScelto, int punteggio){
+        boolean recordEffetuato = false;
+
         switch (tempoScelto){
             case 1:
                 if(punteggio > Integer.parseInt(unMinuto[1][0])){
                     unMinuto[3][0] = unMinuto[2][0];
                     unMinuto[2][0] = unMinuto[1][0];
                     unMinuto[1][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(unMinuto[2][0])){
                     unMinuto[3][0] = unMinuto[2][0];
                     unMinuto[2][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(unMinuto[3][0])){
                     unMinuto[3][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
-                try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\UnMinuto.txt");
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                    for(int i = 0; i < 4; i++){
-                        if(i == 3) printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1]);
-                        else printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1] + "\n");
-                        printWriter.flush();
-                    }
-
-                    printWriter.close();
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if(recordEffetuato){
+                    JOptionPane.showMessageDialog(null, "Il tuo punteggio è nel podio!");
+                    salvaSulFile(unMinuto, ".\\Classifica\\UnMinuto.txt");
                 }
+
                 break;
 
             case 2:
@@ -74,32 +70,25 @@ public class Classifica implements Serializable {
                     dueMinuti[3][0] = dueMinuti[2][0];
                     dueMinuti[2][0] = dueMinuti[1][0];
                     dueMinuti[1][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(dueMinuti[2][0])){
                     dueMinuti[3][0] = dueMinuti[2][0];
                     dueMinuti[2][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(dueMinuti[3][0])){
                     dueMinuti[3][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
-                try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\DueMinuti.txt");
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                    for(int i = 0; i < 4; i++){
-                        if(i == 3) printWriter.write(dueMinuti[i][0] + ";" + dueMinuti[i][1]);
-                        else printWriter.write(dueMinuti[i][0] + ";" + dueMinuti[i][1] + "\n");
-                        printWriter.flush();
-                    }
-
-                    printWriter.close();
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if(recordEffetuato){
+                    JOptionPane.showMessageDialog(null, "Il tuo punteggio è nel podio!");
+                    salvaSulFile(dueMinuti, ".\\Classifica\\DueMinuti.txt");
                 }
+
                 break;
 
             case 5:
@@ -107,33 +96,43 @@ public class Classifica implements Serializable {
                     cinqueMinuti[3][0] = cinqueMinuti[2][0];
                     cinqueMinuti[2][0] = cinqueMinuti[1][0];
                     cinqueMinuti[1][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(cinqueMinuti[2][0])){
                     cinqueMinuti[3][0] = cinqueMinuti[2][0];
                     cinqueMinuti[2][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
 
                 else if(punteggio > Integer.parseInt(cinqueMinuti[3][0])){
                     cinqueMinuti[3][0] = Integer.toString(punteggio);
+                    recordEffetuato = true;
                 }
-                try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\CinqueMinuti.txt");
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                    for(int i = 0; i < 4; i++){
-                        if(i == 3) printWriter.write(cinqueMinuti[i][0] + ";" + cinqueMinuti[i][1]);
-                        else printWriter.write(cinqueMinuti[i][0] + ";" + cinqueMinuti[i][1] + "\n");
-                        printWriter.flush();
-                    }
-
-                    printWriter.close();
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if(recordEffetuato){
+                    JOptionPane.showMessageDialog(null, "Il tuo punteggio è nel podio!");
+                    salvaSulFile(cinqueMinuti, ".\\Classifica\\CinqueMinuti.txt");
                 }
+
                 break;
+        }
+    }
+
+    private void salvaSulFile(String[][] classifica, String path){
+        try {
+            FileWriter fileWriter = new FileWriter(path);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+
+            for(int i = 0; i < 4; i++){
+                if(i == 3) printWriter.write(classifica[i][0] + ";" + classifica[i][1]);
+                else printWriter.write(classifica[i][0] + ";" + classifica[i][1] + "\n");
+                printWriter.flush();
+            }
+
+            printWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

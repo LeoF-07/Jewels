@@ -12,6 +12,8 @@ public class Menu extends JFrame {
         this.setBounds(10, 10, larghezza, altezza);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
 
         JPanel panelTitolo = new JPanel();
         panelTitolo.setPreferredSize(new Dimension(larghezza, 50));

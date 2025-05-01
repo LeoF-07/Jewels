@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -7,6 +9,7 @@ public class ListenerPulsanteGemma implements ActionListener {
     private int row;
     private int col;
     private Tabellone tabellone;
+    private JButton pulsante;
 
     public ListenerPulsanteGemma(int row, int col, Tabellone tabellone){
         this.row = row;
@@ -16,8 +19,9 @@ public class ListenerPulsanteGemma implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        /*JButton pulsante = (JButton) e.getSource();
-        System.out.println();*/
+        pulsante = (JButton) e.getSource();
+        pulsante.setBorder(BorderFactory.createLineBorder(Color.RED));
+
         tabellone.aggiungiGemmaDaScambiare(this);
     }
 
@@ -36,4 +40,9 @@ public class ListenerPulsanteGemma implements ActionListener {
     public int getCol() {
         return col;
     }
+
+    public JButton getPulsante() {
+        return pulsante;
+    }
+
 }

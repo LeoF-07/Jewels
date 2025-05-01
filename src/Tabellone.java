@@ -6,9 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 public class Tabellone extends JPanel {
@@ -35,9 +32,7 @@ public class Tabellone extends JPanel {
                 caselle[i][j] = new JButton(i + " " + j);
                 caselle[i][j].setOpaque(false);
                 caselle[i][j].setContentAreaFilled(false);
-                //caselle[i][j].setBorderPainted(false);
                 caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
-
                 add(caselle[i][j]);
             }
         }
@@ -81,6 +76,8 @@ public class Tabellone extends JPanel {
             gemmeDaScambiare[0] = listenerPulsanteGemma;
         } else if(gemmeDaScambiare[0] != null && gemmeDaScambiare[1] == null){
             gemmeDaScambiare[1] = listenerPulsanteGemma;
+            gemmeDaScambiare[0].getPulsante().setBorder(DEFAULT_BORDER);
+            gemmeDaScambiare[1].getPulsante().setBorder(DEFAULT_BORDER);
             TesterJewels.cercaCombinazioneEAggiorna(gemmeDaScambiare);
         } else {
             gemmeDaScambiare[0] = listenerPulsanteGemma;

@@ -11,6 +11,8 @@ public class FinestraDiGiGioco extends JFrame {
         this.setBounds(10, 10, larghezza, altezza);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
 
         JPanel panelIntestazione = new JPanel();
         panelIntestazione.setLayout(new BoxLayout(panelIntestazione, BoxLayout.X_AXIS));
@@ -26,7 +28,6 @@ public class FinestraDiGiGioco extends JFrame {
 
         this.add(panelIntestazione, BorderLayout.NORTH);
         this.add(tabellone);
-        this.setVisible(true);
     }
 
     public static FinestraDiGiGioco getFinestraDiGiGioco(String titolo, int larghezza, int altezza, Tabellone tabellone, JLabel labelPunteggio, JLabel labelTempo) {

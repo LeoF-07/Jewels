@@ -55,6 +55,7 @@ public class TesterJewels {
 
     public static void gioca(int tempoTotale){
         finestraDiGiGioco.setVisible(true);
+        menu.setVisible(false);
         tabellone.update(gemme, false);
         controllaCombinazioniDisponibili();
         tempoScelto = tempoTotale;
@@ -79,7 +80,6 @@ public class TesterJewels {
     }
 
     private static void avviaCronometro(int tempoTotale){
-        //new Cronometro(labelTempo, tempoTotale).execute();
         cronometro.execute();
     }
 
@@ -218,6 +218,14 @@ public class TesterJewels {
     public static void controlloTutteLeCombinazioni(){
         caselleDaScalare.clear();
 
+        if(semaforoFineScalatura.availablePermits() != 0) {
+            try {
+                semaforoFineScalatura.acquire();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLS; j++){
                 int lunghezzaSequenzaOrizzontale = sequenzaOrizzontale(i, j);
@@ -230,7 +238,7 @@ public class TesterJewels {
         }
 
         if(caselleDaScalare.isEmpty()){
-            if(cronometro.isFinePartita()) semaforoFineScalatura.release();
+            if(semaforoFineScalatura.availablePermits() == 0) semaforoFineScalatura.release();
             return;
         }
 

@@ -6,12 +6,10 @@ public class Cronometro extends SwingWorker<Object, Object> {
 
     private JLabel labelTempo;
     private int tempoTotale;
-    private boolean finePartita;
 
     public Cronometro(JLabel labelTempo, int tempoTotale){
         this.labelTempo = labelTempo;
         this.tempoTotale = tempoTotale;
-        this.finePartita = false;
     }
 
     @Override
@@ -34,7 +32,6 @@ public class Cronometro extends SwingWorker<Object, Object> {
 
                         if(min == tempoTotale) {
                             cancel();
-                            finePartita = true;
                             TesterJewels.terminaPartita();
                         }
                     }
@@ -43,12 +40,8 @@ public class Cronometro extends SwingWorker<Object, Object> {
         };
         java.util.Timer timer = new Timer();
 
-        timer.schedule(task, 0, 200);
+        timer.schedule(task, 0, 1000);
 
         return null;
-    }
-
-    public boolean isFinePartita() {
-        return finePartita;
     }
 }
