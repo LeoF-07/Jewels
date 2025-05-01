@@ -21,6 +21,8 @@ public class Evidenziatore extends SwingWorker<Object, Object> {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                tabellone.disabilita();
+
                 tabellone.setVisible(false);
                 Iterator<Integer> iterator = caselleDaScalare.iterator();
                 while(iterator.hasNext()){
@@ -51,7 +53,6 @@ public class Evidenziatore extends SwingWorker<Object, Object> {
                     caselle[row][col].setBorder(tabellone.DEFAULT_BORDER);
                 }
                 tabellone.setVisible(true);
-
                 TesterJewels.semaforoScala.release();
             }
         });

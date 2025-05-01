@@ -52,7 +52,7 @@ public class Classifica implements Serializable {
                     unMinuto[3][0] = Integer.toString(punteggio);
                 }
                 try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\unMinuto.txt");
+                    FileWriter fileWriter = new FileWriter(".\\Classifica\\UnMinuto.txt");
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     for(int i = 0; i < 4; i++){
@@ -85,12 +85,12 @@ public class Classifica implements Serializable {
                     dueMinuti[3][0] = Integer.toString(punteggio);
                 }
                 try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\unMinuto.txt");
+                    FileWriter fileWriter = new FileWriter(".\\Classifica\\DueMinuti.txt");
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     for(int i = 0; i < 4; i++){
-                        if(i == 3) printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1]);
-                        else printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1] + "\n");
+                        if(i == 3) printWriter.write(dueMinuti[i][0] + ";" + dueMinuti[i][1]);
+                        else printWriter.write(dueMinuti[i][0] + ";" + dueMinuti[i][1] + "\n");
                         printWriter.flush();
                     }
 
@@ -118,12 +118,12 @@ public class Classifica implements Serializable {
                     cinqueMinuti[3][0] = Integer.toString(punteggio);
                 }
                 try {
-                    FileWriter fileWriter = new FileWriter(".\\Classifica\\unMinuto.txt");
+                    FileWriter fileWriter = new FileWriter(".\\Classifica\\CinqueMinuti.txt");
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     for(int i = 0; i < 4; i++){
-                        if(i == 3) printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1]);
-                        else printWriter.write(unMinuto[i][0] + ";" + unMinuto[i][1] + "\n");
+                        if(i == 3) printWriter.write(cinqueMinuti[i][0] + ";" + cinqueMinuti[i][1]);
+                        else printWriter.write(cinqueMinuti[i][0] + ";" + cinqueMinuti[i][1] + "\n");
                         printWriter.flush();
                     }
 

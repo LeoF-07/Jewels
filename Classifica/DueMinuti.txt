@@ -1,4 +1,4 @@
 Punteggio;Tempo
+47;2
 10;2
 9;2
-8;2

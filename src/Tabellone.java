@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +64,7 @@ public class Tabellone extends JPanel {
     }
 
     public void update(Gemma[][] tabellone, boolean updateScalatura) {
+        if(updateScalatura) this.abilita();
         new TabelloneUpdater(rows, cols, tabellone, caselle, this, updateScalatura).execute();
     }
 
@@ -89,7 +91,10 @@ public class Tabellone extends JPanel {
     public void disabilita(){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
-                caselle[i][j].addActionListener(null);
+                if(caselle[i][j].getActionListeners().length != 0){
+                    ActionListener[] actionListener = caselle[i][j].getActionListeners();
+                    caselle[i][j].removeActionListener(actionListener[0]);
+                }
             }
         }
     }

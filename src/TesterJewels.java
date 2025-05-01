@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.io.*;
 import java.util.LinkedHashSet;
 import java.util.concurrent.Semaphore;
 
@@ -14,8 +13,11 @@ public class TesterJewels {
 
     private static Gemma[][] gemme;
     public static Semaphore semaforoScala = new Semaphore(0);
+    public static Semaphore semaforoControllo = new Semaphore(0);
+    public static Semaphore semaforoFineScalatura = new Semaphore(0);
     public static LinkedHashSet<Integer> caselleDaScalare;
     private static int tempoScelto;
+    private static Cronometro cronometro;
     private static Classifica classifica;
 
     private static Menu menu;
@@ -54,18 +56,31 @@ public class TesterJewels {
     public static void gioca(int tempoTotale){
         finestraDiGiGioco.setVisible(true);
         tabellone.update(gemme, false);
+        controllaCombinazioniDisponibili();
         tempoScelto = tempoTotale;
+        cronometro = new Cronometro(labelTempo, tempoTotale);
         avviaCronometro(tempoTotale);
     }
 
     public static void terminaPartita(){
-        tabellone.disabilita();
-        JOptionPane.showMessageDialog(null, "Fine partita");
-        classifica.aggiorna(tempoScelto, punteggio);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    semaforoFineScalatura.acquire();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                tabellone.disabilita();
+                JOptionPane.showMessageDialog(null, "Fine partita");
+                classifica.aggiorna(tempoScelto, punteggio);
+            }
+        }).start();
     }
 
     private static void avviaCronometro(int tempoTotale){
-        new Cronometro(labelTempo, tempoTotale).execute();
+        //new Cronometro(labelTempo, tempoTotale).execute();
+        cronometro.execute();
     }
 
     private static Gemma[][] generaMatriceGemme(){
@@ -214,11 +229,76 @@ public class TesterJewels {
             }
         }
 
+        if(caselleDaScalare.isEmpty()){
+            if(cronometro.isFinePartita()) semaforoFineScalatura.release();
+            return;
+        }
+
         punteggio += caselleDaScalare.size();
         labelPunteggio.setText("Punteggio: " + punteggio);
 
         tabellone.evidenzia(caselleDaScalare);
         tabellone.scala(caselleDaScalare);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    semaforoControllo.acquire();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                controllaCombinazioniDisponibili();
+            }
+        }).start();
+    }
+
+    public static boolean cercaCombinazione(int i1, int j1, int i2, int j2){
+        try{
+            Gemma backup = gemme[i1][j1];
+            gemme[i1][j1] = gemme[i2][j2];
+            gemme[i2][j2] = backup;
+
+            if(combinazioneOrizzontale(i1, j1, true) || combinazioneOrizzontale(i2, j2, true)
+                    || combinazioneVerticale(i1, j1, true) || combinazioneVerticale(i2, j2, true)){
+                backup = gemme[i1][j1];
+                gemme[i1][j1] = gemme[i2][j2];
+                gemme[i2][j2] = backup;
+                return true;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            return false;
+        }
+
+        Gemma backup = gemme[i1][j1];
+        gemme[i1][j1] = gemme[i2][j2];
+        gemme[i2][j2] = backup;
+
+        return false;
+    }
+
+    public static void controllaCombinazioniDisponibili(){
+        for(int i = 0; i < ROWS; i++){
+            for(int j = 0; j < COLS; j++) {
+                if(cercaCombinazione(i, j, i + 1, j) || cercaCombinazione(i, j, i - 1, j)
+                        || cercaCombinazione(i, j, i, j + 1) || cercaCombinazione(i, j, i, j - 1)) {
+                    //System.out.println(i + " " + j);
+                    return;
+                }
+            }
+        }
+
+        JOptionPane.showMessageDialog(null, "Nessuna combinazione disponibile, shuffle");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        gemme = generaMatriceGemme();
+        tabellone.update(gemme, false);
+        controllaCombinazioniDisponibili();
     }
 
     public static void aggiungiAllaLista(int row, int col, Direzione direzione){

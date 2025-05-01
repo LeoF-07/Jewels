@@ -28,13 +28,18 @@ public class TabelloneUpdater extends SwingWorker<Object, Object> {
                     for(int j = 0; j < cols; j++){
                         caselle[i][j].setIcon(new ImageIcon(gemme[i][j].path));
                         caselle[i][j].setText("");
-                        ListenerPulsanteGemma listenerPulsanteGemma = (ListenerPulsanteGemma) caselle[i][j].getActionListeners()[0];
-                        listenerPulsanteGemma.setGemma(gemme[i][j]);
+
+                        if(caselle[i][j].getActionListeners().length != 0){
+                            ListenerPulsanteGemma listenerPulsanteGemma = (ListenerPulsanteGemma) caselle[i][j].getActionListeners()[0];
+                            listenerPulsanteGemma.setGemma(gemme[i][j]);
+                        }
                     }
                 }
                 tabellone.setVisible(true);
 
-                if(updateScalatura) TesterJewels.controlloTutteLeCombinazioni();
+                if(updateScalatura) {
+                    TesterJewels.controlloTutteLeCombinazioni();
+                }
             }
         });
         return null;

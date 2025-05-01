@@ -26,7 +26,7 @@ public class FinestraDiGiGioco extends JFrame {
 
         this.add(panelIntestazione, BorderLayout.NORTH);
         this.add(tabellone);
-        //this.setVisible(true);
+        this.setVisible(true);
     }
 
     public static FinestraDiGiGioco getFinestraDiGiGioco(String titolo, int larghezza, int altezza, Tabellone tabellone, JLabel labelPunteggio, JLabel labelTempo) {

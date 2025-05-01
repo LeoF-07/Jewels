@@ -27,6 +27,8 @@ public class Scalatore extends SwingWorker<Object, Object> {
             if(i == caselleDaScalare.size() - 1) TesterJewels.scalaGemme(row, col, true);
             else TesterJewels.scalaGemme(row, col, false);
         }
+
+        TesterJewels.semaforoControllo.release();
         return null;
     }
 
