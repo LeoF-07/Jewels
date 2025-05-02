@@ -22,7 +22,7 @@ public class Menu extends JFrame {
         this.add(panelTitolo);
 
 
-        String[] attributi = {"Punteggio", "Tempo"};
+        String[] attributi = {"Punteggio", "Tempo (min)"};
 
         JPanel panelTabelle = new JPanel();
         panelTabelle.setPreferredSize(new Dimension(larghezza, 100));

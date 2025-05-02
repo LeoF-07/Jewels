@@ -1,4 +1,4 @@
-Punteggio;Tempo
+Punteggio;Tempo (min)
 10;5
 9;5
 8;5
