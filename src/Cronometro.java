@@ -38,7 +38,7 @@ public class Cronometro extends SwingWorker<Object, Object> {
                 });
             }
         };
-        java.util.Timer timer = new Timer();
+        Timer timer = new Timer();
 
         timer.schedule(task, 0, 1000);
 

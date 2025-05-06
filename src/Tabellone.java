@@ -68,7 +68,7 @@ public class Tabellone extends JPanel {
     }
 
     public void scala(LinkedHashSet<Integer> caselleDaScalare){
-        new Scalatore(caselleDaScalare).execute();
+        new Scalatore(caselleDaScalare).start();
     }
 
     public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){

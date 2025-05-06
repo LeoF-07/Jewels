@@ -1,8 +1,7 @@
-import javax.swing.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-public class Scalatore extends SwingWorker<Object, Object> {
+public class Scalatore extends Thread {
 
     private LinkedHashSet<Integer> caselleDaScalare;
 
@@ -11,11 +10,12 @@ public class Scalatore extends SwingWorker<Object, Object> {
     }
 
     @Override
-    protected Object doInBackground() throws Exception {
-        // Attenzione, questo codice non posso metterlo sul tester perché lavora in un Thread apposito dello SwingWorker
-        // Posso vederelo con sout(Thread.currentThread().getName());
-
-        TesterJewels.semaforoScala.acquire();
+    public void run() {
+        try {
+            TesterJewels.semaforoScala.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         Iterator<Integer> iterator = caselleDaScalare.iterator();
         for(int i = 0; iterator.hasNext(); i++){
@@ -27,7 +27,6 @@ public class Scalatore extends SwingWorker<Object, Object> {
         }
 
         TesterJewels.semaforoControllo.release();
-        return null;
     }
 
 }
