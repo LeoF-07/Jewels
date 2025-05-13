@@ -46,7 +46,7 @@ public class Menu extends JFrame {
         panelTabella3.add(tabella3);
         panelTabelle.add(panelTabella3);
 
-        this.add(panelTabelle);
+        this.add(panelTabelle); // QUESTO ALLINEATO ALL'ASSE Y E GLI ALTRI DENTRO ALLINEATI ALL'ASSE X
 
         JComboBox<Integer> selettoreTempo = new JComboBox<>(tempi);
         JPanel panelSelettoreTempo = new JPanel();

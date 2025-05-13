@@ -18,12 +18,12 @@ public class Scalatore extends Thread {
         }
 
         Iterator<Integer> iterator = caselleDaScalare.iterator();
-        for(int i = 0; iterator.hasNext(); i++){
+        for(int i = 0; iterator.hasNext(); i++){ // Scorre tutte le gemme dell'hashset
             int posizione = iterator.next();
             int row = posizione / TesterJewels.COLS;
             int col = posizione % TesterJewels.COLS;
-            if(i == caselleDaScalare.size() - 1) TesterJewels.scalaGemme(row, col, true);
-            else TesterJewels.scalaGemme(row, col, false);
+            if(i == caselleDaScalare.size() - 1) TesterJewels.scalaGemme(row, col, true); // Chiama la funzione scalaGemme del tester e se è l'ultima dell'hashset rifaccio i controlli delle combinazioni (passando true)
+            else TesterJewels.scalaGemme(row, col, false); // Se non è l'ultima gemma semplicemente chiamo il metodo del tester
         }
 
         TesterJewels.semaforoControllo.release();

@@ -13,7 +13,7 @@ public class Tabellone extends JPanel {
     private int rows;
     private int cols;
 
-    private JButton[][] caselle; //matrice delle gemme
+    private JButton[][] caselle; // Matrice delle gemme
     private ListenerPulsanteGemma[] gemmeDaScambiare;
 
     public final Border DEFAULT_BORDER = new JButton().getBorder();
@@ -30,9 +30,9 @@ public class Tabellone extends JPanel {
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 caselle[i][j] = new JButton(i + " " + j);
-                caselle[i][j].setOpaque(false);
-                caselle[i][j].setContentAreaFilled(false);
-                caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));
+                caselle[i][j].setOpaque(false); // Sfondo trasparente
+                caselle[i][j].setContentAreaFilled(false); // Sfondo trasparente
+                caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this)); // Per fare in modo che una volta cliccato il pulsante venga eseguita un'azione, aggiunta ListenerPulsanteGemma
                 add(caselle[i][j]);
             }
         }
@@ -40,7 +40,7 @@ public class Tabellone extends JPanel {
         gemmeDaScambiare = new ListenerPulsanteGemma[2];
     }
 
-    public static Tabellone getTabellone(int rows, int cols) {
+    public static Tabellone getTabellone(int rows, int cols) { // Singleton
         if(tabellone == null) tabellone = new Tabellone(rows, cols);
         return tabellone;
     }
@@ -71,7 +71,7 @@ public class Tabellone extends JPanel {
         new Scalatore(caselleDaScalare).start();
     }
 
-    public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){
+    public void aggiungiGemmaDaScambiare(ListenerPulsanteGemma listenerPulsanteGemma){ // Memorizza in un array di 2 gemme le 2 gemme selezionate da scambiare, una volta riempito l'array vengono cercate le combinazioni
         if(gemmeDaScambiare[0] == null && gemmeDaScambiare[1] == null){
             gemmeDaScambiare[0] = listenerPulsanteGemma;
         } else if(gemmeDaScambiare[0] != null && gemmeDaScambiare[1] == null){
@@ -85,7 +85,7 @@ public class Tabellone extends JPanel {
         }
     }
 
-    public void disabilita(){
+    public void disabilita(){ // Disabilita il tabellone durante la scalatura
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 if(caselle[i][j].getActionListeners().length != 0){
@@ -96,7 +96,7 @@ public class Tabellone extends JPanel {
         }
     }
 
-    public void abilita(){
+    public void abilita(){ // Abilita il tabellone
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 caselle[i][j].addActionListener(new ListenerPulsanteGemma(i, j, this));

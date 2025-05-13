@@ -4,17 +4,17 @@ import java.util.concurrent.Semaphore;
 
 public class TesterJewels {
 
-    public static final int WIDTH_MENU = 600, HEIGHT_MENU = 200; // grandezza del Jframe
-    public static final int WIDTH = 800, HEIGHT = 870; // grandezza del Jframe
-    public static final int ROWS = 10, COLS = 8; // dimensioni della matrice
+    public static final int WIDTH_MENU = 600, HEIGHT_MENU = 200; // Grandezza del Menu
+    public static final int WIDTH = 800, HEIGHT = 870; // Grandezza del Tabellone
+    public static final int ROWS = 10, COLS = 8; // Righe e colonne del tabellone
 
     private static int punteggio;
     private static int tempo;
 
     private static Gemma[][] gemme;
-    public static Semaphore semaforoScala = new Semaphore(0);
-    public static Semaphore semaforoControllo = new Semaphore(0);
-    public static Semaphore semaforoFineScalatura = new Semaphore(0);
+    public static Semaphore semaforoScala = new Semaphore(0); // Semaforo per coordinare lo scalatore (può scalare solo dopo che le gemme sono state evidenziate in verde)
+    public static Semaphore semaforoControllo = new Semaphore(0); // Semaforo per coordinare i controlli (possono essere fatti solo dopo che è avvenuta la scalatura precedente)
+    public static Semaphore semaforoFineScalatura = new Semaphore(0); // Semaforo per la fine della partita (la partita finisce quando l'ultima scalatura è terminata)
     public static LinkedHashSet<Integer> caselleDaScalare;
     private static int tempoScelto;
     private static Cronometro cronometro;
@@ -31,7 +31,7 @@ public class TesterJewels {
         gemme = generaMatriceGemme();
 
         tabellone = Tabellone.getTabellone(ROWS, COLS); // Singleton
-        tabellone.setVisible(false);
+        tabellone.setVisible(false); // Il tabellone inizialmente è invisibile e verrà mostrato solo quando verrà premuto il pulsante Gioca nel Menu
 
         classifica = new Classifica();
 
@@ -46,7 +46,7 @@ public class TesterJewels {
         finestraDiGiGioco = FinestraDiGiGioco.getFinestraDiGiGioco("Jewels", WIDTH, HEIGHT, tabellone, labelPunteggio, labelTempo); // Singleton
         finestraDiGiGioco.setVisible(false);
 
-        caselleDaScalare = new LinkedHashSet<>();
+        caselleDaScalare = new LinkedHashSet<>(); // Serve a memorizzare le gemme che vanno scalate una volta trovata la combinazione
     }
 
     public static void main(String[] args){
@@ -60,7 +60,7 @@ public class TesterJewels {
         controllaCombinazioniDisponibili();
         tempoScelto = tempoTotale;
         cronometro = new Cronometro(labelTempo, tempoTotale);
-        avviaCronometro(tempoTotale);
+        avviaCronometro();
     }
 
     public static void terminaPartita(){
@@ -79,7 +79,7 @@ public class TesterJewels {
         }).start();
     }
 
-    private static void avviaCronometro(int tempoTotale){
+    private static void avviaCronometro(){
         cronometro.execute();
     }
 
@@ -88,16 +88,17 @@ public class TesterJewels {
 
         for (int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLS; j++){
-                matrice[i][j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
+                matrice[i][j] = Gemma.values()[(int) (Math.random() * Gemma.values().length)]; //in ogni cella viene inserita una gemma casuale tra quelle presenti nell'ENUM
             }
         }
 
+        controllaCombinazioni(matrice); // Doppio controllo per assicurarsi che non ci siano combinazioni fin da subito
         controllaCombinazioni(matrice);
 
         return matrice;
     }
 
-    public static void controllaCombinazioni(Gemma[][] matrice){
+    public static void controllaCombinazioni(Gemma[][] matrice){ // Esegue il controllo delle combinazioni
         for(int i = 0; i < ROWS; i++){
             for (int j = 0; j < COLS; j++){
                 controllaCombinazioneVerticale(matrice, i, j);
@@ -112,9 +113,9 @@ public class TesterJewels {
                 Gemma gemma;
                 do {
                     gemma = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
-                } while(matrice[i][j] == gemma);
+                } while(matrice[i][j] == gemma); // Genera una nuova gemma finchè la gemma generata è ugugale a quella presente nella matrice, quando è diversa si ferma
                 matrice[i][j] = gemma;
-                controllaCombinazioneOrizzontale(matrice, i, j);
+                controllaCombinazioneOrizzontale(matrice, i, j); // Rieseguire i controlli per controllare che non vengano generate ulteriori combinazioni
                 controllaCombinazioneVerticale(matrice, i, j);
             }
         }catch (ArrayIndexOutOfBoundsException e){
@@ -128,10 +129,10 @@ public class TesterJewels {
                 Gemma gemma;
                 do {
                     gemma = Gemma.values()[(int) (Math.random() * Gemma.values().length)];
-                } while(matrice[i][j] == gemma);
+                } while(matrice[i][j] == gemma); // Genera una nuova gemma finchè la gemma generata è ugugale a quella presente nella matrice, quando è diversa si ferma
                 matrice[i][j] = gemma;
                 controllaCombinazioneVerticale(matrice, i, j);
-                controllaCombinazioneOrizzontale(matrice, i, j);
+                controllaCombinazioneOrizzontale(matrice, i, j); // Rieseguire i controlli per controllare che non vengano generate ulteriori combinazioni
             }
         }catch (ArrayIndexOutOfBoundsException e){
 
@@ -165,25 +166,25 @@ public class TesterJewels {
     }
 
 
-    public static void cercaCombinazioneEAggiorna(ListenerPulsanteGemma[] pulsantiPremuti){
+    public static void cercaCombinazioneEAggiorna(ListenerPulsanteGemma[] pulsantiPremuti){ // Metodo richiamato quando si premono due gemme
         ListenerPulsanteGemma listenerPulsanteGemma1 = pulsantiPremuti[0];
         ListenerPulsanteGemma listenerPulsanteGemma2 = pulsantiPremuti[1];
 
         if(((listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow()) && (listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol() + 1 || listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol() - 1)) ||
-                (listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol()) && (listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() + 1 || listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() - 1)){
+                (listenerPulsanteGemma1.getCol() == listenerPulsanteGemma2.getCol()) && (listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() + 1 || listenerPulsanteGemma1.getRow() == listenerPulsanteGemma2.getRow() - 1)){ // Controlla se le 2 gemme selezionate sono adiacenti
 
-            gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma2.getGemma();
+            gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma2.getGemma(); // Se le gemme sono adiacenti vengono scambiate
             gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma1.getGemma();
 
             if(!combinazioneOrizzontale(listenerPulsanteGemma1.getRow(), listenerPulsanteGemma1.getCol(), true) && !combinazioneOrizzontale(listenerPulsanteGemma2.getRow(), listenerPulsanteGemma2.getCol(), true)
-                    && !combinazioneVerticale(listenerPulsanteGemma1.getRow(), listenerPulsanteGemma1.getCol(), true) && !combinazioneVerticale(listenerPulsanteGemma2.getRow(), listenerPulsanteGemma2.getCol(), true)){
+                    && !combinazioneVerticale(listenerPulsanteGemma1.getRow(), listenerPulsanteGemma1.getCol(), true) && !combinazioneVerticale(listenerPulsanteGemma2.getRow(), listenerPulsanteGemma2.getCol(), true)){ // Una volta scambiate le gemme si controlla che ci sia una combinazione
                 gemme[listenerPulsanteGemma1.getRow()][listenerPulsanteGemma1.getCol()] = listenerPulsanteGemma1.getGemma();
-                gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma2.getGemma();
+                gemme[listenerPulsanteGemma2.getRow()][listenerPulsanteGemma2.getCol()] = listenerPulsanteGemma2.getGemma(); // Se non c'è una combinazione le gemme tornano al loro posto originario
             }else{
-                tabellone.update(gemme, false);
+                tabellone.update(gemme, false); // Se la combinazione c'è si fa l'update del tabellone (scambio delle gemme)
             }
 
-            controlloTutteLeCombinazioni();
+            controlloTutteLeCombinazioni(); // Alla fine del metodo si ricontrollano tutte le combinazioni e quelle trovate vengono evidenziate e scalate
         }
     }
 
@@ -218,7 +219,7 @@ public class TesterJewels {
     public static void controlloTutteLeCombinazioni(){
         caselleDaScalare.clear();
 
-        if(semaforoFineScalatura.availablePermits() != 0) {
+        if(semaforoFineScalatura.availablePermits() != 0) { // Se non mettessi questa condizione, il Thread si blocherebbe dopo il primo controllo ricorsivo delle combinazioni. Voglio assicurarmi che funzioni come un ping pong
             try {
                 semaforoFineScalatura.acquire();
             } catch (InterruptedException e) {
@@ -237,7 +238,8 @@ public class TesterJewels {
             }
         }
 
-        if(caselleDaScalare.isEmpty()){
+        if(caselleDaScalare.isEmpty()){ // Se non trova nuove combinazioni e il semaforoFineScalatura è uguale a 0 rilascia il semaforoFineScalatura (devo controllare che sia uguale a 0 altrimenti ogni volta che trova delle combinazioni e scala ricorsivamente aumenta i posti liberi)
+                                        // Se finisce il tempo, si aspetta che la scalatura sia finita, quindi si fa l'acquire di questo semaforo (vedi metodo terminaPartita())
             if(semaforoFineScalatura.availablePermits() == 0) semaforoFineScalatura.release();
             return;
         }
@@ -252,7 +254,7 @@ public class TesterJewels {
             @Override
             public void run() {
                 try {
-                    semaforoControllo.acquire();
+                    semaforoControllo.acquire(); // Prima di controllare altre combinazioni aspetta che siano avvenuti tutti i controlli precedenti con evidenziature e scalature
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -289,7 +291,7 @@ public class TesterJewels {
     public static void controllaCombinazioniDisponibili(){
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLS; j++) {
-                if(cercaCombinazione(i, j, i + 1, j) || cercaCombinazione(i, j, i - 1, j)
+                if(cercaCombinazione(i, j, i + 1, j) || cercaCombinazione(i, j, i - 1, j) // La combinazione viene cercata spostando la gemma a Nord, Sud, Est e Ovest
                         || cercaCombinazione(i, j, i, j + 1) || cercaCombinazione(i, j, i, j - 1)) {
                     //System.out.println(i + " " + j);
                     return;
@@ -309,7 +311,7 @@ public class TesterJewels {
         controllaCombinazioniDisponibili();
     }
 
-    public static void aggiungiAllaLista(int row, int col, Direzione direzione){
+    public static void aggiungiAllaLista(int row, int col, Direzione direzione){ // Aggiunge alla LinkedHashSet le coordinate della sequenza di gemme da scalare sottoforma del risultato di una formula
         switch (direzione){
             case ORIZZONTALE:
                 for(int i = col; i < COLS && gemme[row][col] == gemme[row][i]; i++){

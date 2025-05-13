@@ -1,0 +1,4 @@
+Punteggio;Tempo
+10;1
+9;1
+8;1

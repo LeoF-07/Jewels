@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class Evidenziatore extends SwingWorker<Object, Object> {
 
@@ -17,46 +18,44 @@ public class Evidenziatore extends SwingWorker<Object, Object> {
 
     @Override
     protected Object doInBackground() throws Exception {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                tabellone.disabilita();
-
-                tabellone.setVisible(false);
-                Iterator<Integer> iterator = caselleDaScalare.iterator();
-                while(iterator.hasNext()){
-                    int posizione = iterator.next();
-                    int row = posizione / TesterJewels.COLS;
-                    int col = posizione % TesterJewels.COLS;
-                    caselle[row][col].setBorder(BorderFactory.createLineBorder(Color.GREEN));
-                }
-                tabellone.setVisible(true);
-            }
-        });
+        publish(0);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000); // Attendere un secondo
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                tabellone.setVisible(false);
-                Iterator<Integer> iterator = caselleDaScalare.iterator();
-                while(iterator.hasNext()){
-                    int posizione = iterator.next();
-                    int row = posizione / TesterJewels.COLS;
-                    int col = posizione % TesterJewels.COLS;
-                    caselle[row][col].setBorder(tabellone.DEFAULT_BORDER);
-                }
-                tabellone.setVisible(true);
-                TesterJewels.semaforoScala.release();
-            }
-        });
-
         return null;
+    }
+
+    @Override
+    protected void process(List<Object> chunks) {
+        tabellone.disabilita();
+
+        tabellone.setVisible(false);
+        Iterator<Integer> iterator = caselleDaScalare.iterator();
+        while(iterator.hasNext()){
+            int posizione = iterator.next();
+            int row = posizione / TesterJewels.COLS; // Formula inversa per ottenere le coordinate della gemma da scalare
+            int col = posizione % TesterJewels.COLS;
+            caselle[row][col].setBorder(BorderFactory.createLineBorder(Color.GREEN)); // Mette il bordo a verde
+        }
+        tabellone.setVisible(true);
+    }
+
+    @Override
+    protected void done() {
+        tabellone.setVisible(false);
+        Iterator<Integer> iterator = caselleDaScalare.iterator();
+        while(iterator.hasNext()){
+            int posizione = iterator.next();
+            int row = posizione / TesterJewels.COLS;
+            int col = posizione % TesterJewels.COLS;
+            caselle[row][col].setBorder(tabellone.DEFAULT_BORDER); // Ripristia i bordi originari
+        }
+        tabellone.setVisible(true);
+        TesterJewels.semaforoScala.release();
     }
 
 }
